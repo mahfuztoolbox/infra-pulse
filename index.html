@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Infra Pulse — UI Preview</title>
-  <meta name="description" content="Static design preview of Infra Pulse — portfolio demo, no backend." />
+  <title>Infra Pulse — AppFlux Monitor UI Preview</title>
+  <meta name="description" content="Static UI preview: login then Servers dashboard (no backend)." />
   <style>
     :root {
       --bg: #0d1117;
@@ -14,11 +14,10 @@
       --muted: #8b949e;
       --dim: #6e7681;
       --accent: #58a6ff;
-      --accent-hover: #79b8ff;
       --ok: #3fb950;
       --warn: #d29922;
       --crit: #f85149;
-      --card: #21262d;
+      --green-btn: #238636;
     }
     * { box-sizing: border-box; }
     body {
@@ -27,342 +26,452 @@
       background: var(--bg);
       color: var(--text);
     }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { color: var(--accent-hover); }
+    button { font: inherit; }
+    .hidden { display: none !important; }
 
-    /* Top portfolio bar */
-    .pf-bar {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.75rem 1.25rem;
-      align-items: center;
-      justify-content: space-between;
-      padding: 0.65rem 1.1rem;
-      background: #010409;
-      border-bottom: 1px solid var(--border);
-      font-size: 0.85rem;
+    /* Portfolio note */
+    .pf-note {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; flex-wrap: wrap; gap: 0.5rem 1rem; align-items: center; justify-content: space-between;
+      padding: 0.4rem 0.9rem; background: #010409; border-bottom: 1px solid var(--border);
+      font-size: 0.75rem; color: var(--muted);
     }
-    .pf-bar strong { color: var(--accent); }
-    .pf-links { display: flex; gap: 1rem; flex-wrap: wrap; }
-    .badge {
-      display: inline-block;
-      padding: 0.15rem 0.5rem;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.75rem;
-    }
+    .pf-note strong { color: var(--accent); }
+    .pf-note a { color: var(--accent); text-decoration: none; }
 
-    /* Shell */
-    .shell { display: flex; min-height: calc(100vh - 42px); }
+    /* ========== LOGIN ========== */
+    .login-page {
+      min-height: 100vh;
+      padding: 3.2rem 1.5rem 1.5rem;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      background: radial-gradient(ellipse at top, #1a2744 0%, #0d1117 55%);
+    }
+    .login-card {
+      width: 100%; max-width: 420px; padding: 2rem; border-radius: 12px;
+      background: rgba(22, 27, 34, 0.95); border: 1px solid var(--border);
+      box-shadow: 0 16px 48px rgba(0,0,0,.45);
+    }
+    .login-brand {
+      text-align: center; margin-bottom: 0.5rem;
+      font-size: 0.85rem; font-weight: 700; letter-spacing: 0.08em;
+      color: #79b8ff; text-transform: uppercase;
+    }
+    .login-title { margin: 0; font-size: 1.75rem; font-weight: 600; color: var(--accent); text-align: center; }
+    .login-sub { margin: 0.35rem 0 1.4rem; color: var(--muted); font-size: 0.9rem; text-align: center; }
+    .login-label { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.8rem; color: #c9d1d9; margin-bottom: 1rem; }
+    .email-row {
+      display: flex; border-radius: 8px; overflow: hidden; border: 1px solid var(--border); background: #0d1117;
+    }
+    .login-input {
+      padding: 0.65rem 0.75rem; border-radius: 8px; border: 1px solid var(--border);
+      background: #0d1117; color: var(--text); font-size: 0.95rem; width: 100%;
+    }
+    .email-row .login-input { border: none; border-radius: 0; flex: 1; min-width: 0; }
+    .email-domain {
+      display: flex; align-items: center; padding: 0 0.75rem; font-size: 0.85rem;
+      color: #7ee787; background: #161b22; border-left: 1px solid var(--border); white-space: nowrap;
+    }
+    .login-btn {
+      width: 100%; margin-top: 0.25rem; padding: 0.7rem 1rem; border: none; border-radius: 8px;
+      background: var(--green-btn); color: #fff; font-weight: 600; cursor: pointer;
+    }
+    .login-btn:hover { background: #2ea043; }
+    .login-note { margin: 0.9rem 0 0; font-size: 0.75rem; color: var(--dim); line-height: 1.4; }
+    .login-footer { margin-top: 1.5rem; font-size: 0.75rem; color: var(--dim); }
+
+    /* ========== SHELL ========== */
+    .shell {
+      display: flex; min-height: 100vh; padding-top: 32px;
+    }
     .sidebar {
-      width: 232px;
-      flex-shrink: 0;
-      background: var(--panel);
-      border-right: 1px solid var(--border);
-      display: flex;
-      flex-direction: column;
+      width: 232px; flex-shrink: 0; background: var(--panel); border-right: 1px solid var(--border);
+      display: flex; flex-direction: column; position: sticky; top: 32px; height: calc(100vh - 32px);
     }
     .brand {
-      padding: 0.9rem 0.85rem;
-      border-bottom: 1px solid var(--border);
-      color: var(--accent);
-      font-weight: 650;
-      letter-spacing: 0.02em;
+      padding: 0.85rem 0.75rem; border-bottom: 1px solid var(--border);
     }
-    .brand small { display: block; color: var(--dim); font-weight: 500; font-size: 0.72rem; margin-top: 0.25rem; }
-    .nav { padding: 0.75rem 0.5rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .brand-org { font-size: 0.95rem; font-weight: 700; color: #79c0ff; letter-spacing: 0.02em; }
+    .brand-app { margin-top: 0.2rem; font-size: 0.72rem; font-weight: 700; color: var(--accent); letter-spacing: 0.06em; }
+    .nav-sec {
+      padding: 0.75rem 0.65rem 0.25rem; font-size: 0.65rem; font-weight: 700;
+      letter-spacing: 0.12em; color: var(--dim); text-transform: uppercase;
+    }
+    .nav { display: flex; flex-direction: column; gap: 0.15rem; padding: 0 0.45rem; }
     .nav button {
-      all: unset;
-      cursor: pointer;
-      padding: 0.55rem 0.7rem;
-      border-radius: 8px;
-      color: var(--muted);
-      font-size: 0.9rem;
+      all: unset; cursor: pointer; display: flex; align-items: center; gap: 0.55rem;
+      padding: 0.5rem 0.65rem; border-radius: 8px; color: var(--muted); font-size: 0.88rem;
     }
     .nav button:hover { background: #21262d; color: var(--text); }
     .nav button.active { background: #1f6feb33; color: var(--accent); font-weight: 600; }
-    .main { flex: 1; min-width: 0; padding: 1.1rem 1.25rem 2rem; overflow: auto; }
-    .page-title { margin: 0 0 0.25rem; font-size: 1.35rem; }
-    .page-sub { margin: 0 0 1.1rem; color: var(--muted); font-size: 0.9rem; }
-
-    .grid { display: grid; gap: 0.85rem; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
-    .card {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.9rem 1rem;
-    }
-    .card h3 { margin: 0 0 0.35rem; font-size: 0.95rem; }
-    .card .meta { color: var(--dim); font-size: 0.78rem; margin-bottom: 0.7rem; }
-    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.45rem; }
-    .metric {
-      background: #0d1117;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 0.45rem 0.5rem;
-      text-align: center;
-    }
-    .metric b { display: block; font-size: 1.05rem; }
-    .metric span { color: var(--dim); font-size: 0.7rem; }
-    .status {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
+    .nav-ico { width: 1.1rem; text-align: center; opacity: 0.9; }
+    .sidebar-foot {
+      margin-top: auto; border-top: 1px solid var(--border); padding: 0.75rem;
       font-size: 0.78rem;
-      margin-top: 0.65rem;
     }
-    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
-    .dot.warn { background: var(--warn); }
-    .dot.crit { background: var(--crit); }
+    .user-name { font-weight: 600; color: var(--text); }
+    .user-mail { color: var(--dim); font-size: 0.72rem; margin-top: 0.15rem; word-break: break-all; }
+    .user-role {
+      display: inline-block; margin-top: 0.35rem; padding: 0.1rem 0.45rem; border-radius: 999px;
+      background: #21262d; color: var(--muted); font-size: 0.68rem;
+    }
+    .logout-btn {
+      margin-top: 0.65rem; width: 100%; border: 1px solid #f8514944; background: transparent;
+      color: #f85149; border-radius: 8px; padding: 0.45rem 0.6rem; cursor: pointer; font-size: 0.82rem;
+    }
+    .logout-btn:hover { background: #f8514914; }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      overflow: hidden;
-      font-size: 0.88rem;
+    .main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+    .topbar {
+      display: flex; flex-wrap: wrap; gap: 0.75rem 1rem; align-items: center; justify-content: space-between;
+      padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); background: #0d1117;
     }
-    th, td { padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--border); text-align: left; }
-    th { color: var(--muted); font-weight: 600; background: #161b22; }
-    tr:last-child td { border-bottom: 0; }
-
-    .login-wrap {
-      min-height: calc(100vh - 42px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 1.5rem;
-      background: radial-gradient(ellipse at top, #1a2744 0%, #0d1117 55%);
+    .crumb { font-size: 0.82rem; color: var(--muted); }
+    .crumb b { color: var(--accent); }
+    .stats { display: flex; flex-wrap: wrap; gap: 0.45rem; }
+    .stat {
+      min-width: 4.2rem; padding: 0.35rem 0.55rem; border-radius: 8px;
+      background: #161b22; border: 1px solid var(--border); text-align: center;
     }
-    .login-wrap.show { display: flex; }
-    .shell.hide { display: none; }
-    .login-card {
-      width: 100%;
-      max-width: 420px;
-      padding: 2rem;
-      border-radius: 12px;
-      background: rgba(22, 27, 34, 0.95);
-      border: 1px solid var(--border);
-      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
-    }
-    .login-card h1 { margin: 0; color: var(--accent); font-size: 1.75rem; }
-    .login-card p { color: var(--muted); margin: 0.35rem 0 1.35rem; }
-    .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.9rem; }
-    .field label { font-size: 0.82rem; color: var(--muted); }
-    .field input {
-      padding: 0.65rem 0.75rem;
-      border-radius: 8px;
-      border: 1px solid var(--border);
-      background: #0d1117;
-      color: var(--text);
-    }
-    .btn {
-      width: 100%;
-      border: 0;
-      border-radius: 8px;
-      padding: 0.7rem 1rem;
-      background: #238636;
-      color: #fff;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn:hover { background: #2ea043; }
-    .note {
-      margin-top: 1rem;
-      font-size: 0.78rem;
-      color: var(--dim);
-      line-height: 1.4;
+    .stat .k { display: block; font-size: 0.62rem; color: var(--dim); letter-spacing: 0.06em; }
+    .stat .v { font-size: 1.05rem; font-weight: 700; }
+    .stat .v.up { color: var(--ok); }
+    .stat .v.down { color: var(--crit); }
+    .stat .v.alert { color: var(--warn); }
+    .top-right { display: flex; align-items: center; gap: 0.55rem; color: var(--muted); font-size: 0.8rem; }
+    .interval {
+      background: #161b22; border: 1px solid var(--border); color: var(--text);
+      border-radius: 6px; padding: 0.25rem 0.4rem; font-size: 0.8rem;
     }
 
-    .arch {
-      margin-top: 1.25rem;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 0.85rem;
+    .content { padding: 0.75rem 0.85rem 2.5rem; overflow: auto; flex: 1; }
+    .category-board {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 10.5rem), 1fr));
+      gap: 0.55rem 0.65rem; align-items: start;
     }
-    .arch img { width: 100%; height: auto; border-radius: 8px; display: block; }
-    .hidden { display: none !important; }
+    .category-head {
+      display: flex; align-items: center; justify-content: space-between; gap: 0.4rem;
+      padding: 0.4rem 0.5rem; margin-bottom: 0.35rem; border-radius: 6px; background: #21262d;
+    }
+    .category-title {
+      margin: 0; font-size: 0.68rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent);
+    }
+    .category-count {
+      font-size: 0.68rem; color: var(--muted); background: #0d1117;
+      padding: 0.1rem 0.4rem; border-radius: 999px;
+    }
+    .category-cards { display: flex; flex-direction: column; gap: 0.35rem; }
+    .server-card {
+      background: #161b22; border: 1px solid var(--border); border-radius: 6px;
+      padding: 0.35rem 0.45rem; display: flex; flex-direction: column; gap: 0.25rem;
+    }
+    .server-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.35rem; }
+    .server-card-title {
+      margin: 0; font-size: 0.82rem; font-weight: 600; line-height: 1.25;
+      color: var(--text); overflow: hidden; text-overflow: ellipsis;
+    }
+    .chip {
+      flex-shrink: 0; min-width: 1.25rem; height: 1.2rem; padding: 0 0.3rem;
+      border-radius: 4px; font-size: 0.65rem; font-weight: 700;
+      display: inline-flex; align-items: center; justify-content: center;
+    }
+    .chip-ok { background: #23863633; color: var(--ok); border: 1px solid #23863666; }
+    .chip-warn { background: #d2992233; color: var(--warn); border: 1px solid #d2992266; }
+    .compact-metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.15rem; }
+    .cm { display: flex; flex-direction: column; gap: 0.08rem; min-width: 0; }
+    .cm-label { font-size: 0.58rem; color: var(--dim); letter-spacing: 0.04em; }
+    .cm-val { font-size: 0.74rem; font-weight: 600; }
+    .bar { height: 2px; border-radius: 1px; background: #30363d; overflow: hidden; }
+    .bar > i { display: block; height: 100%; border-radius: 1px; background: var(--ok); }
+    .bar > i.warn { background: var(--warn); }
+    .bar > i.crit { background: var(--crit); }
 
-    @media (max-width: 800px) {
+    .page-placeholder {
+      border: 1px solid var(--border); background: #161b22; border-radius: 10px;
+      padding: 1.5rem; color: var(--muted); max-width: 40rem;
+    }
+    .foot {
+      text-align: center; padding: 0.75rem; font-size: 0.72rem; color: var(--dim);
+      border-top: 1px solid var(--border);
+    }
+
+    @media (max-width: 900px) {
       .sidebar { display: none; }
-      .main { padding: 1rem; }
+      .category-board { grid-template-columns: repeat(auto-fit, minmax(9.5rem, 1fr)); }
     }
   </style>
 </head>
 <body>
-  <div class="pf-bar">
-    <div><strong>Infra Pulse</strong> — static UI preview for recruiters <span class="badge">no backend · no source code</span></div>
-    <div class="pf-links">
-      <a href="readme.html">README</a>
+  <div class="pf-note">
+    <div><strong>Infra Pulse</strong> — static UI preview (no real login / no backend)</div>
+    <div>
+      <a href="readme.html">README</a> ·
       <a href="images/architecture.png">Architecture</a>
-      <a href="#" id="toggleLogin">Show login screen</a>
     </div>
   </div>
 
-  <div class="login-wrap" id="loginView">
+  <!-- LOGIN -->
+  <div class="login-page" id="loginView">
     <div class="login-card">
-      <h1>Infra Pulse</h1>
-      <p>Sign in to the monitoring dashboard</p>
-      <div class="field">
-        <label>Email</label>
-        <input type="text" value="operator@example.com" readonly />
-      </div>
-      <div class="field">
-        <label>Password</label>
-        <input type="password" value="••••••••" readonly />
-      </div>
-      <button class="btn" type="button" id="enterDemo">Enter demo dashboard</button>
-      <p class="note">This is a static design preview only. Real authentication, live metrics, and API calls are not included in this public portfolio repo.</p>
+      <div class="login-brand">Jamuna Bank</div>
+      <h1 class="login-title">APPFLUX MONITOR</h1>
+      <p class="login-sub">Sign in with your bank account</p>
+      <form id="loginForm">
+        <label class="login-label">
+          Email
+          <div class="email-row">
+            <input class="login-input" type="text" id="emailLocal" value="mahfuzur.rahman" autocomplete="username" />
+            <span class="email-domain">@jamunabank.com.bd</span>
+          </div>
+        </label>
+        <label class="login-label">
+          Password
+          <input class="login-input" type="password" id="password" value="demo" autocomplete="current-password" />
+        </label>
+        <button class="login-btn" type="submit">Sign in</button>
+        <p class="login-note">Demo only — any values work. Click <b>Sign in</b> to open the Servers dashboard preview.</p>
+      </form>
     </div>
+    <footer class="login-footer">© 2026 Jamuna Bank PLC. All rights reserved.</footer>
   </div>
 
-  <div class="shell" id="dashView">
+  <!-- DASHBOARD -->
+  <div class="shell hidden" id="dashView">
     <aside class="sidebar">
       <div class="brand">
-        Infra Pulse
-        <small>Infrastructure monitoring</small>
+        <div class="brand-org">Jamuna Bank</div>
+        <div class="brand-app">APPFLUX MONITOR</div>
       </div>
+      <div class="nav-sec">Monitor</div>
       <nav class="nav">
-        <button class="active" data-page="servers">Servers</button>
-        <button data-page="apps">Applications</button>
-        <button data-page="conn">Connectivity</button>
-        <button data-page="incidents">Incidents</button>
-        <button data-page="arch">Architecture</button>
+        <button type="button" class="active" data-page="servers"><span class="nav-ico">▣</span> Servers</button>
+        <button type="button" data-page="apps"><span class="nav-ico">◈</span> Applications</button>
+        <button type="button" data-page="conn"><span class="nav-ico">⇄</span> Connectivity</button>
+        <button type="button" data-page="net"><span class="nav-ico">◍</span> Network</button>
       </nav>
+      <div class="nav-sec">Reports</div>
+      <nav class="nav">
+        <button type="button" data-page="incidents"><span class="nav-ico">⚠</span> Incident reports</button>
+        <button type="button" data-page="nlog"><span class="nav-ico">☰</span> Notification log</button>
+      </nav>
+      <div class="nav-sec">Configuration</div>
+      <nav class="nav">
+        <button type="button" data-page="mapp"><span class="nav-ico">⚙</span> Manage applications</button>
+        <button type="button" data-page="msrv"><span class="nav-ico">⚙</span> Manage servers</button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="user-name">Mr. Mahfuzur Rahman</div>
+        <div class="user-mail">mahfuzur.rahman@jamunabank.com.bd</div>
+        <span class="user-role">Administrator</span>
+        <button type="button" class="logout-btn" id="logoutBtn">Log out</button>
+      </div>
     </aside>
 
-    <main class="main">
-      <section id="page-servers">
-        <h2 class="page-title">Servers</h2>
-        <p class="page-sub">Live host health via Python WebSocket agents (CPU, RAM, disk, network).</p>
-        <div class="grid">
-          <article class="card">
-            <h3>app-core-01</h3>
-            <div class="meta">172.23.x.x · Production</div>
-            <div class="metrics">
-              <div class="metric"><b>18%</b><span>CPU</span></div>
-              <div class="metric"><b>62%</b><span>RAM</span></div>
-              <div class="metric"><b>41%</b><span>Disk</span></div>
-            </div>
-            <div class="status"><span class="dot"></span> Agent connected</div>
-          </article>
-          <article class="card">
-            <h3>db-primary-02</h3>
-            <div class="meta">172.23.x.x · Database</div>
-            <div class="metrics">
-              <div class="metric"><b>44%</b><span>CPU</span></div>
-              <div class="metric"><b>78%</b><span>RAM</span></div>
-              <div class="metric"><b>67%</b><span>Disk</span></div>
-            </div>
-            <div class="status"><span class="dot warn"></span> Memory warning</div>
-          </article>
-          <article class="card">
-            <h3>edge-proxy-03</h3>
-            <div class="meta">172.23.x.x · Edge</div>
-            <div class="metrics">
-              <div class="metric"><b>9%</b><span>CPU</span></div>
-              <div class="metric"><b>35%</b><span>RAM</span></div>
-              <div class="metric"><b>22%</b><span>Disk</span></div>
-            </div>
-            <div class="status"><span class="dot"></span> Agent connected</div>
-          </article>
+    <div class="main">
+      <header class="topbar">
+        <div class="crumb"><b>APPFLUX MONITOR</b> / <span id="pageCrumb">Servers</span></div>
+        <div class="stats" id="topStats">
+          <div class="stat"><span class="k">TOTAL</span><span class="v">32</span></div>
+          <div class="stat"><span class="k">UP</span><span class="v up">32</span></div>
+          <div class="stat"><span class="k">DOWN</span><span class="v down">0</span></div>
+          <div class="stat"><span class="k">ALERTS</span><span class="v alert">18</span></div>
         </div>
-      </section>
-
-      <section id="page-apps" class="hidden">
-        <h2 class="page-title">Applications</h2>
-        <p class="page-sub">HTTP/TCP fleet probes with uptime status and incident hooks.</p>
-        <table>
-          <thead>
-            <tr><th>Application</th><th>Endpoints</th><th>Status</th><th>Last check</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>Payment API</td><td>2</td><td><span class="dot"></span> Up</td><td>12s ago</td></tr>
-            <tr><td>Customer Prefetch</td><td>1</td><td><span class="dot"></span> Up</td><td>15s ago</td></tr>
-            <tr><td>Auth Service</td><td>1</td><td><span class="dot crit"></span> Down</td><td>18s ago</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section id="page-conn" class="hidden">
-        <h2 class="page-title">Connectivity</h2>
-        <p class="page-sub">Source → target TCP path checks from distributed connectivity agents.</p>
-        <table>
-          <thead>
-            <tr><th>Flow</th><th>Source</th><th>Target</th><th>Port</th><th>Result</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>App → DB</td><td>app-core-01</td><td>db-primary-02</td><td>1521</td><td><span class="dot"></span> Reachable</td></tr>
-            <tr><td>App → Redis</td><td>app-core-01</td><td>cache-01</td><td>6379</td><td><span class="dot"></span> Reachable</td></tr>
-            <tr><td>Branch → Core</td><td>branch-gw</td><td>core-lb</td><td>443</td><td><span class="dot warn"></span> Slow</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section id="page-incidents" class="hidden">
-        <h2 class="page-title">Incidents</h2>
-        <p class="page-sub">Lifecycle tracking with email / SMS / Telegram notification delivery.</p>
-        <table>
-          <thead>
-            <tr><th>Time</th><th>Resource</th><th>Severity</th><th>State</th></tr>
-          </thead>
-          <tbody>
-            <tr><td>10:14</td><td>Auth Service</td><td>Critical</td><td>Open</td></tr>
-            <tr><td>09:51</td><td>db-primary-02 RAM</td><td>Warning</td><td>Acknowledged</td></tr>
-            <tr><td>Yesterday</td><td>edge-proxy-03 agent</td><td>Critical</td><td>Resolved</td></tr>
-          </tbody>
-        </table>
-      </section>
-
-      <section id="page-arch" class="hidden">
-        <h2 class="page-title">Architecture</h2>
-        <p class="page-sub">React dashboard · Express API · MongoDB · Python metrics agents · connectivity agents.</p>
-        <div class="arch">
-          <img src="images/architecture.png" alt="Infra Pulse architecture diagram" />
+        <div class="top-right">
+          <select class="interval" aria-label="Refresh interval"><option>3s</option><option>5s</option><option>10s</option></select>
+          <span id="clock">—</span>
         </div>
-      </section>
-    </main>
+      </header>
+
+      <div class="content">
+        <section id="page-servers">
+          <div class="category-board" id="serverBoard"></div>
+        </section>
+        <section id="page-apps" class="hidden">
+          <div class="page-placeholder"><h2 style="margin:0 0 .5rem;color:var(--accent)">Applications</h2>HTTP/TCP fleet probe status (static preview).</div>
+        </section>
+        <section id="page-conn" class="hidden">
+          <div class="page-placeholder"><h2 style="margin:0 0 .5rem;color:var(--accent)">Connectivity</h2>Source → target path checks (static preview).</div>
+        </section>
+        <section id="page-net" class="hidden">
+          <div class="page-placeholder"><h2 style="margin:0 0 .5rem;color:var(--accent)">Network</h2>Network device monitoring (static preview).</div>
+        </section>
+        <section id="page-incidents" class="hidden">
+          <div class="page-placeholder"><h2 style="margin:0 0 .5rem;color:var(--accent)">Incident reports</h2>Incident lifecycle history (static preview).</div>
+        </section>
+        <section id="page-nlog" class="hidden">
+          <div class="page-placeholder"><h2 style="margin:0 0 .5rem;color:var(--accent)">Notification log</h2>Email / SMS / Telegram delivery log (static preview).</div>
+        </section>
+        <section id="page-mapp" class="hidden">
+          <div class="page-placeholder"><h2 style="margin:0 0 .5rem;color:var(--accent)">Manage applications</h2>Admin registry (static preview).</div>
+        </section>
+        <section id="page-msrv" class="hidden">
+          <div class="page-placeholder"><h2 style="margin:0 0 .5rem;color:var(--accent)">Manage servers</h2>Admin server registry (static preview).</div>
+        </section>
+      </div>
+      <footer class="foot">© 2026 Jamuna Bank PLC. All rights reserved.</footer>
+    </div>
   </div>
 
   <script>
     const loginView = document.getElementById("loginView");
     const dashView = document.getElementById("dashView");
-    const toggleLogin = document.getElementById("toggleLogin");
+    const board = document.getElementById("serverBoard");
+    const pageCrumb = document.getElementById("pageCrumb");
+    const titles = {
+      servers: "Servers", apps: "Applications", conn: "Connectivity", net: "Network",
+      incidents: "Incident reports", nlog: "Notification log", mapp: "Manage applications", msrv: "Manage servers"
+    };
 
-    document.getElementById("enterDemo").addEventListener("click", () => {
-      loginView.classList.remove("show");
-      dashView.classList.remove("hide");
-      toggleLogin.textContent = "Show login screen";
-    });
+    const categories = [
+      {
+        name: "API GW PRODUCTION",
+        servers: [
+          ["NGINX GW MCLOUD-62", 2, 12, 89, 1],
+          ["NGINX GW MCLOUD-63", 1, 11, 42, 0],
+          ["NGINX GW MCLOUD-64", 3, 14, 38, 0],
+        ],
+      },
+      {
+        name: "APP SERVER PRODUCTION",
+        servers: [
+          ["APPFLUX-API-51", 18, 62, 41, 2],
+          ["APPFLUX-API-52", 12, 55, 33, 0],
+          ["CORE-API-71", 22, 71, 48, 1],
+          ["CORE-API-72", 9, 44, 29, 0],
+          ["AUTH-SVC-38", 15, 58, 36, 0],
+          ["AUTH-SVC-39", 11, 49, 31, 0],
+          ["BATCH-JOB-81", 6, 38, 52, 0],
+          ["BATCH-JOB-82", 8, 41, 47, 3],
+          ["REPORT-API-90", 14, 53, 40, 0],
+        ],
+      },
+      {
+        name: "K8S PRODUCTION",
+        servers: [
+          ["K8S-MASTER-01", 28, 67, 45, 1],
+          ["K8S-WORKER-11", 35, 72, 51, 2],
+          ["K8S-WORKER-12", 31, 68, 49, 0],
+          ["K8S-WORKER-13", 19, 54, 37, 0],
+        ],
+      },
+      {
+        name: "KAFKA CLUSTER",
+        servers: [
+          ["KAFKA-BROKER-01", 24, 61, 55, 1],
+          ["KAFKA-BROKER-02", 21, 59, 52, 0],
+          ["KAFKA-BROKER-03", 27, 64, 58, 4],
+        ],
+      },
+      {
+        name: "DATABASE",
+        servers: [
+          ["ORACLE-DB-PRIMARY", 44, 78, 67, 2],
+          ["ORACLE-DB-STANDBY", 18, 52, 61, 0],
+        ],
+      },
+      {
+        name: "TOOLS",
+        servers: [
+          ["JENKINS-CI-01", 16, 48, 72, 1],
+          ["NEXUS-REPO-01", 7, 39, 64, 0],
+          ["GITLAB-RUNNER-01", 12, 45, 33, 0],
+          ["ELASTIC-01", 33, 70, 58, 3],
+          ["KIBANA-01", 9, 42, 28, 0],
+          ["PROMETHEUS-01", 14, 51, 46, 0],
+          ["GRAFANA-01", 5, 36, 22, 0],
+          ["VAULT-01", 4, 29, 19, 0],
+          ["BASTION-01", 2, 21, 15, 0],
+        ],
+      },
+      {
+        name: "API GW STAGING",
+        servers: [
+          ["NGINX GW STAGE-01", 3, 22, 31, 0],
+          ["NGINX GW STAGE-02", 2, 19, 27, 1],
+        ],
+      },
+    ];
 
-    toggleLogin.addEventListener("click", (e) => {
+    function barClass(pct) {
+      if (pct >= 85) return "crit";
+      if (pct >= 70) return "warn";
+      return "";
+    }
+
+    function renderServers() {
+      board.innerHTML = categories.map((cat) => {
+        const cards = cat.servers.map(([name, cpu, ram, disk, alerts]) => {
+          const chip = alerts > 0
+            ? `<span class="chip chip-warn">${alerts}</span>`
+            : `<span class="chip chip-ok">OK</span>`;
+          return `
+            <article class="server-card">
+              <div class="server-card-top">
+                <h3 class="server-card-title">${name}</h3>
+                ${chip}
+              </div>
+              <div class="compact-metrics">
+                <div class="cm"><span class="cm-label">CPU</span><span class="cm-val">${cpu}%</span>
+                  <div class="bar"><i class="${barClass(cpu)}" style="width:${cpu}%"></i></div></div>
+                <div class="cm"><span class="cm-label">RAM</span><span class="cm-val">${ram}%</span>
+                  <div class="bar"><i class="${barClass(ram)}" style="width:${ram}%"></i></div></div>
+                <div class="cm"><span class="cm-label">DISK</span><span class="cm-val">${disk}%</span>
+                  <div class="bar"><i class="${barClass(disk)}" style="width:${disk}%"></i></div></div>
+              </div>
+            </article>`;
+        }).join("");
+        return `
+          <div class="category-column">
+            <div class="category-head">
+              <h2 class="category-title">${cat.name}</h2>
+              <span class="category-count">${cat.servers.length}</span>
+            </div>
+            <div class="category-cards">${cards}</div>
+          </div>`;
+      }).join("");
+    }
+
+    function showDash() {
+      loginView.classList.add("hidden");
+      dashView.classList.remove("hidden");
+      renderServers();
+      tickClock();
+    }
+
+    function showLogin() {
+      dashView.classList.add("hidden");
+      loginView.classList.remove("hidden");
+    }
+
+    document.getElementById("loginForm").addEventListener("submit", (e) => {
       e.preventDefault();
-      const showingLogin = loginView.classList.contains("show");
-      if (showingLogin) {
-        loginView.classList.remove("show");
-        dashView.classList.remove("hide");
-        toggleLogin.textContent = "Show login screen";
-      } else {
-        loginView.classList.add("show");
-        dashView.classList.add("hide");
-        toggleLogin.textContent = "Show dashboard";
-      }
+      showDash();
     });
+    document.getElementById("logoutBtn").addEventListener("click", showLogin);
 
     document.querySelectorAll(".nav button").forEach((btn) => {
       btn.addEventListener("click", () => {
         document.querySelectorAll(".nav button").forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
         const page = btn.dataset.page;
-        ["servers", "apps", "conn", "incidents", "arch"].forEach((id) => {
-          document.getElementById("page-" + id).classList.toggle("hidden", id !== page);
+        pageCrumb.textContent = titles[page] || page;
+        Object.keys(titles).forEach((id) => {
+          const el = document.getElementById("page-" + id);
+          if (el) el.classList.toggle("hidden", id !== page);
         });
       });
     });
+
+    function tickClock() {
+      const el = document.getElementById("clock");
+      const now = new Date();
+      el.textContent = now.toLocaleString("en-GB", {
+        day: "numeric", month: "short", year: "numeric",
+        hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false,
+      }).replace(",", "");
+    }
+    setInterval(tickClock, 1000);
   </script>
 </body>
 </html>
