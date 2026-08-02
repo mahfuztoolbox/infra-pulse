@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Infra Pulse — UI Preview</title>
+  <meta name="description" content="Static design preview of Infra Pulse — portfolio demo, no backend." />
+  <style>
+    :root {
+      --bg: #0d1117;
+      --panel: #161b22;
+      --border: #30363d;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --dim: #6e7681;
+      --accent: #58a6ff;
+      --accent-hover: #79b8ff;
+      --ok: #3fb950;
+      --warn: #d29922;
+      --crit: #f85149;
+      --card: #21262d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { color: var(--accent-hover); }
+
+    /* Top portfolio bar */
+    .pf-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.75rem 1.25rem;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 1.1rem;
+      background: #010409;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+    .pf-bar strong { color: var(--accent); }
+    .pf-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    /* Shell */
+    .shell { display: flex; min-height: calc(100vh - 42px); }
+    .sidebar {
+      width: 232px;
+      flex-shrink: 0;
+      background: var(--panel);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+    }
+    .brand {
+      padding: 0.9rem 0.85rem;
+      border-bottom: 1px solid var(--border);
+      color: var(--accent);
+      font-weight: 650;
+      letter-spacing: 0.02em;
+    }
+    .brand small { display: block; color: var(--dim); font-weight: 500; font-size: 0.72rem; margin-top: 0.25rem; }
+    .nav { padding: 0.75rem 0.5rem; display: flex; flex-direction: column; gap: 0.2rem; }
+    .nav button {
+      all: unset;
+      cursor: pointer;
+      padding: 0.55rem 0.7rem;
+      border-radius: 8px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+    .nav button:hover { background: #21262d; color: var(--text); }
+    .nav button.active { background: #1f6feb33; color: var(--accent); font-weight: 600; }
+    .main { flex: 1; min-width: 0; padding: 1.1rem 1.25rem 2rem; overflow: auto; }
+    .page-title { margin: 0 0 0.25rem; font-size: 1.35rem; }
+    .page-sub { margin: 0 0 1.1rem; color: var(--muted); font-size: 0.9rem; }
+
+    .grid { display: grid; gap: 0.85rem; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.9rem 1rem;
+    }
+    .card h3 { margin: 0 0 0.35rem; font-size: 0.95rem; }
+    .card .meta { color: var(--dim); font-size: 0.78rem; margin-bottom: 0.7rem; }
+    .metrics { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.45rem; }
+    .metric {
+      background: #0d1117;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.45rem 0.5rem;
+      text-align: center;
+    }
+    .metric b { display: block; font-size: 1.05rem; }
+    .metric span { color: var(--dim); font-size: 0.7rem; }
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      font-size: 0.78rem;
+      margin-top: 0.65rem;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--ok); }
+    .dot.warn { background: var(--warn); }
+    .dot.crit { background: var(--crit); }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      font-size: 0.88rem;
+    }
+    th, td { padding: 0.7rem 0.8rem; border-bottom: 1px solid var(--border); text-align: left; }
+    th { color: var(--muted); font-weight: 600; background: #161b22; }
+    tr:last-child td { border-bottom: 0; }
+
+    .login-wrap {
+      min-height: calc(100vh - 42px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      background: radial-gradient(ellipse at top, #1a2744 0%, #0d1117 55%);
+    }
+    .login-wrap.show { display: flex; }
+    .shell.hide { display: none; }
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      padding: 2rem;
+      border-radius: 12px;
+      background: rgba(22, 27, 34, 0.95);
+      border: 1px solid var(--border);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.45);
+    }
+    .login-card h1 { margin: 0; color: var(--accent); font-size: 1.75rem; }
+    .login-card p { color: var(--muted); margin: 0.35rem 0 1.35rem; }
+    .field { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 0.9rem; }
+    .field label { font-size: 0.82rem; color: var(--muted); }
+    .field input {
+      padding: 0.65rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0d1117;
+      color: var(--text);
+    }
+    .btn {
+      width: 100%;
+      border: 0;
+      border-radius: 8px;
+      padding: 0.7rem 1rem;
+      background: #238636;
+      color: #fff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn:hover { background: #2ea043; }
+    .note {
+      margin-top: 1rem;
+      font-size: 0.78rem;
+      color: var(--dim);
+      line-height: 1.4;
+    }
+
+    .arch {
+      margin-top: 1.25rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 0.85rem;
+    }
+    .arch img { width: 100%; height: auto; border-radius: 8px; display: block; }
+    .hidden { display: none !important; }
+
+    @media (max-width: 800px) {
+      .sidebar { display: none; }
+      .main { padding: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="pf-bar">
+    <div><strong>Infra Pulse</strong> — static UI preview for recruiters <span class="badge">no backend · no source code</span></div>
+    <div class="pf-links">
+      <a href="readme.html">README</a>
+      <a href="images/architecture.png">Architecture</a>
+      <a href="#" id="toggleLogin">Show login screen</a>
+    </div>
+  </div>
+
+  <div class="login-wrap" id="loginView">
+    <div class="login-card">
+      <h1>Infra Pulse</h1>
+      <p>Sign in to the monitoring dashboard</p>
+      <div class="field">
+        <label>Email</label>
+        <input type="text" value="operator@example.com" readonly />
+      </div>
+      <div class="field">
+        <label>Password</label>
+        <input type="password" value="••••••••" readonly />
+      </div>
+      <button class="btn" type="button" id="enterDemo">Enter demo dashboard</button>
+      <p class="note">This is a static design preview only. Real authentication, live metrics, and API calls are not included in this public portfolio repo.</p>
+    </div>
+  </div>
+
+  <div class="shell" id="dashView">
+    <aside class="sidebar">
+      <div class="brand">
+        Infra Pulse
+        <small>Infrastructure monitoring</small>
+      </div>
+      <nav class="nav">
+        <button class="active" data-page="servers">Servers</button>
+        <button data-page="apps">Applications</button>
+        <button data-page="conn">Connectivity</button>
+        <button data-page="incidents">Incidents</button>
+        <button data-page="arch">Architecture</button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <section id="page-servers">
+        <h2 class="page-title">Servers</h2>
+        <p class="page-sub">Live host health via Python WebSocket agents (CPU, RAM, disk, network).</p>
+        <div class="grid">
+          <article class="card">
+            <h3>app-core-01</h3>
+            <div class="meta">172.23.x.x · Production</div>
+            <div class="metrics">
+              <div class="metric"><b>18%</b><span>CPU</span></div>
+              <div class="metric"><b>62%</b><span>RAM</span></div>
+              <div class="metric"><b>41%</b><span>Disk</span></div>
+            </div>
+            <div class="status"><span class="dot"></span> Agent connected</div>
+          </article>
+          <article class="card">
+            <h3>db-primary-02</h3>
+            <div class="meta">172.23.x.x · Database</div>
+            <div class="metrics">
+              <div class="metric"><b>44%</b><span>CPU</span></div>
+              <div class="metric"><b>78%</b><span>RAM</span></div>
+              <div class="metric"><b>67%</b><span>Disk</span></div>
+            </div>
+            <div class="status"><span class="dot warn"></span> Memory warning</div>
+          </article>
+          <article class="card">
+            <h3>edge-proxy-03</h3>
+            <div class="meta">172.23.x.x · Edge</div>
+            <div class="metrics">
+              <div class="metric"><b>9%</b><span>CPU</span></div>
+              <div class="metric"><b>35%</b><span>RAM</span></div>
+              <div class="metric"><b>22%</b><span>Disk</span></div>
+            </div>
+            <div class="status"><span class="dot"></span> Agent connected</div>
+          </article>
+        </div>
+      </section>
+
+      <section id="page-apps" class="hidden">
+        <h2 class="page-title">Applications</h2>
+        <p class="page-sub">HTTP/TCP fleet probes with uptime status and incident hooks.</p>
+        <table>
+          <thead>
+            <tr><th>Application</th><th>Endpoints</th><th>Status</th><th>Last check</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Payment API</td><td>2</td><td><span class="dot"></span> Up</td><td>12s ago</td></tr>
+            <tr><td>Customer Prefetch</td><td>1</td><td><span class="dot"></span> Up</td><td>15s ago</td></tr>
+            <tr><td>Auth Service</td><td>1</td><td><span class="dot crit"></span> Down</td><td>18s ago</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="page-conn" class="hidden">
+        <h2 class="page-title">Connectivity</h2>
+        <p class="page-sub">Source → target TCP path checks from distributed connectivity agents.</p>
+        <table>
+          <thead>
+            <tr><th>Flow</th><th>Source</th><th>Target</th><th>Port</th><th>Result</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>App → DB</td><td>app-core-01</td><td>db-primary-02</td><td>1521</td><td><span class="dot"></span> Reachable</td></tr>
+            <tr><td>App → Redis</td><td>app-core-01</td><td>cache-01</td><td>6379</td><td><span class="dot"></span> Reachable</td></tr>
+            <tr><td>Branch → Core</td><td>branch-gw</td><td>core-lb</td><td>443</td><td><span class="dot warn"></span> Slow</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="page-incidents" class="hidden">
+        <h2 class="page-title">Incidents</h2>
+        <p class="page-sub">Lifecycle tracking with email / SMS / Telegram notification delivery.</p>
+        <table>
+          <thead>
+            <tr><th>Time</th><th>Resource</th><th>Severity</th><th>State</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>10:14</td><td>Auth Service</td><td>Critical</td><td>Open</td></tr>
+            <tr><td>09:51</td><td>db-primary-02 RAM</td><td>Warning</td><td>Acknowledged</td></tr>
+            <tr><td>Yesterday</td><td>edge-proxy-03 agent</td><td>Critical</td><td>Resolved</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="page-arch" class="hidden">
+        <h2 class="page-title">Architecture</h2>
+        <p class="page-sub">React dashboard · Express API · MongoDB · Python metrics agents · connectivity agents.</p>
+        <div class="arch">
+          <img src="images/architecture.png" alt="Infra Pulse architecture diagram" />
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const loginView = document.getElementById("loginView");
+    const dashView = document.getElementById("dashView");
+    const toggleLogin = document.getElementById("toggleLogin");
+
+    document.getElementById("enterDemo").addEventListener("click", () => {
+      loginView.classList.remove("show");
+      dashView.classList.remove("hide");
+      toggleLogin.textContent = "Show login screen";
+    });
+
+    toggleLogin.addEventListener("click", (e) => {
+      e.preventDefault();
+      const showingLogin = loginView.classList.contains("show");
+      if (showingLogin) {
+        loginView.classList.remove("show");
+        dashView.classList.remove("hide");
+        toggleLogin.textContent = "Show login screen";
+      } else {
+        loginView.classList.add("show");
+        dashView.classList.add("hide");
+        toggleLogin.textContent = "Show dashboard";
+      }
+    });
+
+    document.querySelectorAll(".nav button").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".nav button").forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        const page = btn.dataset.page;
+        ["servers", "apps", "conn", "incidents", "arch"].forEach((id) => {
+          document.getElementById("page-" + id).classList.toggle("hidden", id !== page);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

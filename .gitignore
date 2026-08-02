@@ -1,0 +1,21 @@
+# Ignore everything by default (public portfolio only)
+*
+# Allow directory traversal
+!*/
+# Public files only
+!.gitignore
+!README.md
+!index.html
+!readme.html
+!deploy-github.sh
+!images/
+!images/**
+!docs/
+!docs/**
+# Never publish secrets
+**/.env
+**/.env.*
+**/*.key
+**/*.pem
+**/*.crt
+**/*.p12
