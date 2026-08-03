@@ -91,25 +91,39 @@ Fleet UI: category columns, live UP/DOWN/ALERT counts, server detail pages, hear
 
 ![Infra Pulse system architecture](images/architecture.png)
 
+*Diagram shows the same control/data plane as this platform (UI, API + scheduler, metrics agents, connectivity agents). The image title may still say the internal product name; the design is Infra Pulse.*
+
 ```text
-Browser (React SPA)
-        │  HTTPS /api
-        ▼
-Express API  +  MongoDB
-   │         │
-   │         ├── fleet probe scheduler ──► application endpoints (HTTP/TCP)
-   │         └── connectivity orchestration ──► agents on source hosts
+Operators
    │
-   └── UI also opens WebSocket streams ──► metrics agents on each server (:9001)
+   ▼
+React dashboard (Nginx)
+   │ HTTPS /api                    │ WSS /ws/<host> (Nginx proxy)
+   ▼                               ▼
+Express API + fleet scheduler     Python metrics agents on each server (:9001)
+   │  ├─ MongoDB (config, incidents, snapshots, settings)
+   │  ├─ Application probes ──► HTTP/TCP endpoints
+   │  ├─ Network device probes ──► registered devices
+   │  └─ Connectivity orchestration
+            ▼
+      Connectivity agents on source hosts (:8788)
+            └── TCP check ──► target IP / DNS / port
 ```
 
-| Component | Role |
-|-----------|------|
-| **Web UI** | React + TypeScript SPA (Nginx static hosting) |
-| **API** | Express REST — registries, probes, incidents, notifications, RBAC |
-| **MongoDB** | Configuration, incidents, delivery logs, settings |
-| **Metrics agent** | Python daemon — CPU/RAM/disk/network/process/service snapshots over WebSocket |
-| **Connectivity agent** | Node service on source hosts — TCP path checks + traffic samples |
+| Component | Typical role |
+|-----------|----------------|
+| **Web UI** | React + TypeScript SPA — Servers, Applications, Connectivity, Network, reports, admin |
+| **API + scheduler** | Express on Node.js — registries, RBAC, incidents, alerts; background fleet probes |
+| **MongoDB** | Configuration, incidents, probe snapshots, notification delivery log |
+| **Metrics agent** | Python WebSocket daemon per host (`:9001`) — CPU, memory, disk, network, processes, services |
+| **Connectivity agent** | Node service on **source** hosts (`:8788`) — TCP path checks + traffic samples |
+| **Nginx + PM2** | Reverse proxy / static UI; API process management in production |
+
+**Data paths (accurate to the product):**
+
+1. **Live host metrics** — browser ↔ Nginx ↔ agent WebSocket (not polled only through the API)  
+2. **Applications / network devices** — API scheduler probes targets and stores snapshots  
+3. **Connectivity** — API asks the **source** agent to check the target (real path from that host)  
 
 ---
 
