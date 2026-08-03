@@ -7,8 +7,7 @@
 
 | | |
 |---|---|
-| **UI preview** | https://mahfuztoolbox.github.io/infra-pulse/ |
-| **README (HTML)** | https://mahfuztoolbox.github.io/infra-pulse/readme.html |
+| **Live demo** | https://mahfuztoolbox.github.io/infra-pulse/ |
 | **Architecture** | [images/architecture.png](images/architecture.png) |
 | **Role** | End-to-end design & implementation (agents, API, UI, deployment) |
 | **Stack** | React · TypeScript · Node.js · Express · MongoDB · Python · WebSocket · Nginx · PM2 |
@@ -136,15 +135,17 @@ Express API  +  MongoDB
 
 ---
 
-## Static demo in this repo
+## Static demo
 
-Because source code stays private, this repository ships a **static UI preview**:
+Because source code stays private, a **static UI preview** is published on GitHub Pages:
 
-1. Open [`index.html`](index.html) (or the GitHub Pages URL above)  
-2. **Sign in** screen → click **Sign in**  
-3. **Servers dashboard** preview (sample cards — not live agents)
+**Open the demo:** https://mahfuztoolbox.github.io/infra-pulse/
 
-Also: [`readme.html`](readme.html) renders this README as a static page.
+1. Open the URL above (`index.html` on GitHub Pages)  
+2. On the **Sign in** screen, click **Sign in**  
+3. The **Servers dashboard** preview loads (sample cards — not live agents)
+
+Documentation for this project is this **`README.md`** file only (rendered on the GitHub repository page).
 
 ---
 
@@ -163,8 +164,7 @@ Also: [`readme.html`](readme.html) renders this README as a static page.
 | Path | Description |
 |------|-------------|
 | `README.md` | Project documentation (this file) |
-| `readme.html` | README as a static web page |
-| `index.html` | Static login → dashboard UI preview |
+| `index.html` | Static login → dashboard UI (served at the Live demo URL) |
 | `images/architecture.png` | Architecture diagram |
 | `docs/screenshots/` | Optional sanitized screenshots |
 | `deploy-github.sh` | Helper to publish portfolio updates |

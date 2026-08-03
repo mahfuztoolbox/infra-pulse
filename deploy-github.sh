@@ -103,8 +103,10 @@ if [[ "${SYNC}" -eq 1 ]]; then
   fi
 fi
 
-git add README.md index.html readme.html .gitignore deploy-github.sh images docs 2>/dev/null || \
-git add README.md index.html readme.html .gitignore deploy-github.sh images
+git add README.md index.html .gitignore deploy-github.sh images docs 2>/dev/null || \
+git add README.md index.html .gitignore deploy-github.sh images
+# Drop obsolete HTML readme if it still exists in git history / working tree
+git rm -f --ignore-unmatch readme.html 2>/dev/null || true
 
 if git diff --cached --quiet; then
   echo "No changes to deploy."

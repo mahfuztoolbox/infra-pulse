@@ -6,7 +6,6 @@
 !.gitignore
 !README.md
 !index.html
-!readme.html
 !deploy-github.sh
 !images/
 !images/**
