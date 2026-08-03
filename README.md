@@ -148,17 +148,13 @@ Also: [`readme.html`](readme.html) renders this README as a static page.
 
 ---
 
-## Highlights for CV / LinkedIn
+## Key capabilities
 
-- Designed and built **end-to-end**: host agents, REST API, realtime UI, deploy tooling  
-- **Deep host telemetry** (not uptime-only): CPU, memory, storage, network, processes, services, sockets  
-- **Fleet-scale application probing** with a background scheduler  
-- **Source-based connectivity** monitoring (path checks from real servers)  
-- **RBAC**, incident lifecycle, and multi-channel alerting with delivery audit  
-
-**One-liner:**
-
-> **Infra Pulse** — infrastructure monitoring platform with realtime host metrics (CPU, memory, disk, network, processes), application HTTP/TCP probes, source→target connectivity checks, RBAC, incidents, and email/SMS/Telegram alerts.
+- **End-to-end platform** — host agents, REST API, realtime dashboard, and production deployment model  
+- **Deep host telemetry** — CPU, memory, storage, network, processes, services, and socket-level views (not uptime-only)  
+- **Fleet application probing** — scheduled HTTP/TCP checks across many endpoints  
+- **Source-based connectivity** — path validation from real source hosts to targets  
+- **Operations workflow** — RBAC, incident lifecycle, and multi-channel alerts with delivery audit  
 
 ---
 
