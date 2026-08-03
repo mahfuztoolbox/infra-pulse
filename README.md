@@ -1,43 +1,90 @@
 # Infra Pulse
 
-**Realtime infrastructure monitoring platform** — live server health, application uptime checks, and source→target connectivity, in one dashboard.
+**Full-stack infrastructure monitoring platform** for operations teams — realtime host metrics, application uptime, network path checks, incidents, and alerting in one dashboard.
 
 > This public repository contains **documentation** and a **static UI preview** only.  
 > Application source code is **not** published here.
 
-**Static pages (after GitHub Pages is enabled):**
-
-| Page | URL |
-|------|-----|
-| UI preview | https://mahfuztoolbox.github.io/infra-pulse/ |
-| README page | https://mahfuztoolbox.github.io/infra-pulse/readme.html |
-| Architecture image | https://mahfuztoolbox.github.io/infra-pulse/images/architecture.png |
-
-Local files: [`index.html`](index.html) · [`readme.html`](readme.html)
-
----
-
-## At a glance (for recruiters & reviewers)
-
 | | |
 |---|---|
-| **Type** | Full-stack monitoring platform |
-| **Role** | End-to-end design & development — agents, API, UI, deployment |
-| **Stack** | React, TypeScript, Node.js, Express, MongoDB, Python, WebSocket, Nginx, PM2 |
-| **Monitors** | Linux servers · HTTP/TCP applications · source→target connectivity paths |
-| **Extras** | RBAC · incident lifecycle · email/SMS/Telegram alerts · audit logs |
-
-**One-line summary:** *A Datadog-style monitoring hub — live server metrics, scheduled application probes, and path-based connectivity checks from specific source hosts.*
+| **UI preview** | https://mahfuztoolbox.github.io/infra-pulse/ |
+| **README (HTML)** | https://mahfuztoolbox.github.io/infra-pulse/readme.html |
+| **Architecture** | [images/architecture.png](images/architecture.png) |
+| **Role** | End-to-end design & implementation (agents, API, UI, deployment) |
+| **Stack** | React · TypeScript · Node.js · Express · MongoDB · Python · WebSocket · Nginx · PM2 |
 
 ---
 
-## What problem does it solve?
+## Why Infra Pulse?
 
-1. **Servers** — Is each machine healthy? (CPU, memory, disk, network)
-2. **Applications** — Are our APIs and services responding?
-3. **Connectivity** — Can server A reach server B on the network?
+Typical monitoring tools answer only part of the picture. Infra Pulse combines four operational views:
 
-Infra Pulse answers all three in one product, with alerting and incident history when something fails.
+1. **Host metrics** — what is happening *on* each server right now  
+2. **Application probes** — are business APIs / services reachable?  
+3. **Connectivity paths** — can *source host A* reach *target B* (not only “can the monitor box ping B”)?  
+4. **Network devices** — inventory and status for network assets in the same console  
+
+…plus **RBAC**, **incidents**, and **multi-channel alerts** when something fails.
+
+---
+
+## Features
+
+### 1. Server / host monitoring (realtime)
+
+Lightweight **Python agents** on each Linux host stream a full metrics snapshot over **WebSocket** (typically every few seconds).
+
+| Area | What operators see |
+|------|---------------------|
+| **CPU** | Overall %, per-core load, frequency, load averages |
+| **Memory** | RAM used / available / %, swap |
+| **Storage** | Disk mounts — capacity, used %, read/write counters |
+| **Network** | Per-NIC status, IPs, speed/MTU, bytes/packets, errors/drops, live RX/TX rates |
+| **Connections** | TCP/UDP overview, top remote peers, peer drill-down |
+| **Processes** | Top processes by CPU/memory, app identity, per-process network rates |
+| **Services** | Watched system services (active / inactive) |
+| **Security posture** | Listening ports, SSH hardening signals, firewall/update hints (read-only) |
+| **Alerts** | Threshold warnings/criticals for CPU, RAM, disk, interface down, drops |
+
+Fleet UI: category columns, live UP/DOWN/ALERT counts, server detail pages, heartbeat history, and agent reachability checks from the API.
+
+### 2. Application monitoring
+
+- Register applications with one or more **HTTP / TCP endpoints**
+- Background **fleet probe scheduler** (concurrent, interval-based — not click-to-probe)
+- Up / down status, latency-oriented results, incident hooks on failure
+- Roles / categories for organizing large application fleets
+
+### 3. Connectivity monitoring
+
+- Define **flows**: source host → target host/IP + port  
+- Probes run **from the source machine** via a small connectivity agent (real path validation)
+- Topology-style views and live **peer traffic** samples (RX/TX) when sockets exist
+- Useful for app→DB, branch→core, and multi-tier path checks
+
+### 4. Network inventory
+
+- Network device / category registry alongside servers and apps  
+- Unified navigation under the same dashboard shell
+
+### 5. Incidents, alerts & notifications
+
+- Incident lifecycle (open → acknowledge → resolve)  
+- Resource and application failure correlation  
+- Notification channels: **email / SMS / Telegram** (configurable)  
+- Notification **delivery log** for auditability  
+
+### 6. Access control & admin
+
+- Login-based access with **RBAC** (permissions for monitor / reports / configuration)  
+- Admin registries: servers, applications, connectivity flows, network, users  
+- App settings (title, branding, intervals) without redeploying UI code  
+
+### 7. Operations & deployment
+
+- Production-oriented layout: Nginx (UI) · PM2 (API) · systemd/daemon agents  
+- Env-based configuration, reverse-proxy friendly WebSocket paths  
+- Designed for multi-host fleets (API host ≠ monitored hosts ≠ connectivity sources)
 
 ---
 
@@ -45,72 +92,88 @@ Infra Pulse answers all three in one product, with alerting and incident history
 
 ![Infra Pulse system architecture](images/architecture.png)
 
-| Component | Purpose |
-|-----------|---------|
-| Web UI | React dashboard (Nginx static) |
-| API | Express + MongoDB — probes, incidents, alerts |
-| Metrics agent | Python WebSocket stream per server |
-| Connectivity agent | TCP path checks from each source host |
+```text
+Browser (React SPA)
+        │  HTTPS /api
+        ▼
+Express API  +  MongoDB
+   │         │
+   │         ├── fleet probe scheduler ──► application endpoints (HTTP/TCP)
+   │         └── connectivity orchestration ──► agents on source hosts
+   │
+   └── UI also opens WebSocket streams ──► metrics agents on each server (:9001)
+```
+
+| Component | Role |
+|-----------|------|
+| **Web UI** | React + TypeScript SPA (Nginx static hosting) |
+| **API** | Express REST — registries, probes, incidents, notifications, RBAC |
+| **MongoDB** | Configuration, incidents, delivery logs, settings |
+| **Metrics agent** | Python daemon — CPU/RAM/disk/network/process/service snapshots over WebSocket |
+| **Connectivity agent** | Node service on source hosts — TCP path checks + traffic samples |
 
 ---
 
-## Three monitoring modules
+## Tech stack
 
-### 1. Server monitoring
-Live host health via Python agents over WebSocket.
+| Layer | Technologies |
+|-------|----------------|
+| Frontend | React, TypeScript, Vite, React Router |
+| Backend | Node.js, Express, MongoDB driver |
+| Agents | Python (`psutil`, `websockets`), Node connectivity agent |
+| Realtime | WebSocket metrics broadcast |
+| Runtime ops | Linux, Nginx, PM2, systemd |
 
-### 2. Application monitoring
-HTTP/TCP fleet probes with uptime status and incidents.
+---
 
-### 3. Connectivity monitoring
-Source→target TCP checks from distributed agents (real network paths).
+## Product modules (UI map)
+
+| Nav area | Pages |
+|----------|--------|
+| **Monitor** | Servers · Applications · Connectivity · Network |
+| **Reports** | Incident reports · Notification log |
+| **Configuration** | Manage servers / applications / connectivity / network · user access · settings · notification channels |
+
+---
+
+## Static demo in this repo
+
+Because source code stays private, this repository ships a **static UI preview**:
+
+1. Open [`index.html`](index.html) (or the GitHub Pages URL above)  
+2. **Sign in** screen → click **Sign in**  
+3. **Servers dashboard** preview (sample cards — not live agents)
+
+Also: [`readme.html`](readme.html) renders this README as a static page.
+
+---
+
+## Highlights for CV / LinkedIn
+
+- Designed and built **end-to-end**: host agents, REST API, realtime UI, deploy tooling  
+- **Deep host telemetry** (not uptime-only): CPU, memory, storage, network, processes, services, sockets  
+- **Fleet-scale application probing** with a background scheduler  
+- **Source-based connectivity** monitoring (path checks from real servers)  
+- **RBAC**, incident lifecycle, and multi-channel alerting with delivery audit  
+
+**One-liner:**
+
+> **Infra Pulse** — infrastructure monitoring platform with realtime host metrics (CPU, memory, disk, network, processes), application HTTP/TCP probes, source→target connectivity checks, RBAC, incidents, and email/SMS/Telegram alerts.
 
 ---
 
 ## Repository contents
 
-| Path | What it is |
-|------|------------|
-| `README.md` | This project write-up (Markdown source) |
+| Path | Description |
+|------|-------------|
+| `README.md` | Project documentation (this file) |
 | `readme.html` | README as a static web page |
-| `index.html` | Static UI design preview |
+| `index.html` | Static login → dashboard UI preview |
 | `images/architecture.png` | Architecture diagram |
-| `docs/screenshots/` | Optional sanitized UI screenshots |
-| `deploy-github.sh` | Push updates to this GitHub repo |
+| `docs/screenshots/` | Optional sanitized screenshots |
+| `deploy-github.sh` | Helper to publish portfolio updates |
 
-No API source, no React source, no deploy secrets.
-
-### Update / push to GitHub
-
-```bash
-cd infra-pulse
-
-# first time only (if .git is missing)
-./deploy-github.sh --init
-
-# after editing README.md or index.html
-./deploy-github.sh
-./deploy-github.sh "Update static UI preview"
-./deploy-github.sh --sync
-```
-
-Or manually:
-
-```bash
-cd infra-pulse
-git init
-git add README.md index.html images docs .gitignore deploy-github.sh
-git commit -m "first commit"
-git branch -M main
-git remote add origin https://github.com/mahfuztoolbox/infra-pulse.git
-git push -u origin main
-```
-
----
-
-## Portfolio / CV blurb
-
-> **Infra Pulse** — Full-stack infrastructure monitoring platform. Python WebSocket agents stream server metrics; Node.js API runs fleet-wide HTTP/TCP application probes and multi-hop connectivity checks; React dashboard provides RBAC, incident tracking, and email/SMS/Telegram alerting.
+No application source, secrets, or private keys are included.
 
 ---
 
